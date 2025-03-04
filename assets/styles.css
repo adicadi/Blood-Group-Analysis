@@ -1,0 +1,10 @@
+/* 🏆 Add Hover Effect for Dash DataTable Rows */
+.dash-table-container .dash-spreadsheet-container tbody tr:hover {
+    background-color: #d3e0ea !important;  /* Light Blue Hover Effect */
+    cursor: pointer;  /* Change Cursor on Hover */
+}
+
+/* 🔥 Highlight Selected Row */
+.dash-table-container .dash-spreadsheet-container tbody tr:active {
+    background-color: #ffcc00 !important;  /* Yellow for Active Row */
+}
