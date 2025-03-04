@@ -4,6 +4,7 @@ from dash import dcc, html, dash_table
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from dash.dependencies import Input, Output
 
 # Load dataset
 df = pd.read_csv("Data/processed_blood_type_data_with_continent.csv")
@@ -14,18 +15,13 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 # Blood type columns
 blood_groups = ["O+", "A+", "B+", "AB+", "O-", "A-", "B-", "AB-"]
 
-# Average Blood Group Distribution Pie Chart
-fig_pie = px.pie(df[blood_groups].mean().reset_index(), 
-                  values=0, names="index", 
-                  title="Global Blood Type Distribution")
-
 # Layout
 app.layout = dbc.Container([
     
     # Header
     dbc.Row([
         dbc.Col(html.H1("🌍 Global Blood Group Distribution Dashboard", 
-                        className="text-center mb-4"), width=12)
+                        className="text-center mb-3"), width=12)
     ]),
 
     # Filters (Dropdowns)
@@ -37,9 +33,9 @@ app.layout = dbc.Container([
                 options=[{'label': bt, 'value': bt} for bt in blood_groups],
                 value='O+',
                 clearable=False,
-                className="mb-3"
+                className="mb-2"
             )
-        ], width=4),
+        ], width=6),
 
         dbc.Col([
             html.Label("Select Continent"),
@@ -48,37 +44,23 @@ app.layout = dbc.Container([
                 options=[{'label': c, 'value': c} for c in df["Continent"].unique()],
                 value=df["Continent"].unique()[0],
                 clearable=False,
-                className="mb-3"
+                className="mb-2"
             )
-        ], width=4)
-    ]),
-
-    # Main Dashboard Layout
-    dbc.Row([
-
-        # Left: World Map
-        dbc.Col([
-            dcc.Graph(id='choropleth-map')
-        ], width=6),
-
-        # Right: Pie Chart
-        dbc.Col([
-            dcc.Graph(figure=fig_pie)
         ], width=6)
-    ]),
+    ], className="mb-3"),
 
-    # Middle Section: Bar Chart & Satisfaction Metrics
+    # Grid Layout (2x2 for Charts)
     dbc.Row([
-        dbc.Col([
-            dcc.Graph(id='bar-chart')
-        ], width=6),
+        dbc.Col(dcc.Graph(id='choropleth-map'), width=6),  # Left: Map
+        dbc.Col(dcc.Graph(id='pie-chart'), width=6)        # Right: Pie Chart
+    ], className="mb-3"),
 
-        dbc.Col([
-            dcc.Graph(id='gauge-chart')  # Gauge chart for rarest blood type
-        ], width=6),
-    ]),
+    dbc.Row([
+        dbc.Col(dcc.Graph(id='bar-chart'), width=6),   # Left: Bar Chart
+        dbc.Col(dcc.Graph(id='gauge-chart'), width=6)  # Right: Gauge Chart
+    ], className="mb-3"),
 
-    # Table View of Data
+    # Data Table
     dbc.Row([
         dbc.Col([
             dash_table.DataTable(
@@ -86,20 +68,21 @@ app.layout = dbc.Container([
                 columns=[{"name": i, "id": i} for i in df.columns],
                 data=df.to_dict('records'),
                 style_table={'overflowX': 'auto'},
-                style_cell={'padding': '10px', 'textAlign': 'center'}
+                style_cell={'padding': '8px', 'textAlign': 'center'}
             )
         ], width=12)
     ])
 
 ], fluid=True)
 
-# Callbacks for Interactivity
-from dash.dependencies import Input, Output
 
+
+# Callbacks for Interactivity
 @app.callback(
     [Output('choropleth-map', 'figure'),
      Output('bar-chart', 'figure'),
-     Output('gauge-chart', 'figure')],
+     Output('gauge-chart', 'figure'),
+     Output('pie-chart', 'figure')],
     [Input('blood-type-dropdown', 'value'),
      Input('continent-dropdown', 'value')]
 )
@@ -117,7 +100,7 @@ def update_all_charts(selected_blood_type, selected_continent):
         title=f"Global Distribution of {selected_blood_type} in {selected_continent}",
         color_continuous_scale="plasma"
     )
-    fig_map.update_layout(margin={"r":0,"t":50,"l":0,"b":0})
+    fig_map.update_layout(margin={"r": 0, "t": 50, "l": 0, "b": 0})
 
     # 📊 Update Bar Chart
     fig_bar = px.bar(
@@ -141,7 +124,15 @@ def update_all_charts(selected_blood_type, selected_continent):
         gauge={"axis": {"range": [0, 10]}, "bar": {"color": "red"}}
     ))
 
-    return fig_map, fig_bar, fig_gauge
+    # 🥧 Update Pie Chart for Selected Continent's Blood Type Distribution
+    avg_distribution = filtered_df[blood_groups].mean().reset_index()
+    fig_pie = px.pie(avg_distribution, 
+                     values=0, 
+                     names="index", 
+                     title=f"Blood Type Distribution in {selected_continent}")
+
+    return fig_map, fig_bar, fig_gauge, fig_pie
+
 
 
 # Run the app
