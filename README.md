@@ -1,5 +1,6 @@
 # Blood-Group-Analysis
  # 🩸 Blood Type Distribution Dashboard
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/8e091edd-c729-4086-8224-ea5e819cf775" />
 
 ## Project Overview
 
