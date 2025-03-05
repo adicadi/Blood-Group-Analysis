@@ -6,6 +6,7 @@ from utils import load_and_preprocess_data, BLOOD_GROUPS
 import logging
 from plotly.io import to_image
 from dash import dcc
+from layout import DARK_MODE_STYLE, LIGHT_MODE_STYLE, CARD_STYLE_DARK, CARD_STYLE_LIGHT, DATATABLE_STYLE_DARK, DATATABLE_STYLE_LIGHT, TOGGLE_LABEL_DARK, TOGGLE_LABEL_LIGHT
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -158,3 +159,54 @@ def register_callbacks(app):
         except Exception as e:
             logger.error(f"Error downloading charts: {str(e)}")
             return dcc.send_string(f"Error: {str(e)}", "error.txt")
+        
+    @app.callback(
+    [
+        Output("main-container", "style"),
+        Output("card-1", "style"),
+        Output("card-2", "style"),
+        Output("card-3", "style"),
+        Output("card-4", "style"),
+        Output("card-5", "style"),
+        Output("card-6", "style"),
+        Output("data-table-card", "style"),
+        Output("data-table", "style_data"),
+        # Update DataTable styling
+    ],
+    [Input("dark-mode-toggle", "value")],
+    )
+    def toggle_dark_mode(dark_mode):
+        if dark_mode:
+            return (
+            DARK_MODE_STYLE,
+            CARD_STYLE_DARK,
+            CARD_STYLE_DARK,
+            CARD_STYLE_DARK,
+            CARD_STYLE_DARK,
+            CARD_STYLE_DARK,
+            CARD_STYLE_DARK,
+            CARD_STYLE_DARK,
+            DATATABLE_STYLE_DARK,  # Apply dark mode style
+        )
+        else:
+            return (
+            LIGHT_MODE_STYLE,
+            CARD_STYLE_LIGHT,
+            CARD_STYLE_LIGHT,
+            CARD_STYLE_LIGHT,
+            CARD_STYLE_LIGHT,
+            CARD_STYLE_LIGHT,
+            CARD_STYLE_LIGHT,
+            CARD_STYLE_LIGHT,
+            DATATABLE_STYLE_LIGHT,  # Apply light mode style
+        )
+    @app.callback(
+    Output("dark-mode-toggle", "style"),  # Update toggle label color dynamically
+    [Input("dark-mode-toggle", "value")]
+    )
+    def update_toggle_label_style(dark_mode):
+        return TOGGLE_LABEL_DARK if dark_mode else TOGGLE_LABEL_LIGHT
+
+
+    
+    

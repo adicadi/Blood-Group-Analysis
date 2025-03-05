@@ -2,20 +2,60 @@ import dash_bootstrap_components as dbc
 from dash import dcc, html, dash_table
 from utils import BLOOD_GROUPS, CONTINENTS
 
+
 # Card Style with Static Shadows (No Hover or 3D Effect)
-CARD_STYLE = {
-    "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",  # Static shadow
+# Card Style with Light/Dark Mode Support
+CARD_STYLE_LIGHT = {
+    "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
     "border-radius": "12px",
     "background-color": "#ffffff",
     "overflow": "hidden",
     "padding": "10px",
-    "transition": "transform 0.2s ease-in-out",  # Smooth hover effect
+    "transition": "all 0.3s ease-in-out",
 }
 
-CARD_HOVER_STYLE = {
-    **CARD_STYLE,
-    "transform": "scale(1.05)",  # Slight zoom on hover
+CARD_STYLE_DARK = {
+    "box-shadow": "0 8px 16px rgba(255, 255, 255, 0.1)",
+    "border-radius": "12px",
+    "background-color": "#1e1e1e",
+    "overflow": "hidden",
+    "padding": "10px",
+    "transition": "all 0.3s ease-in-out",
+    "color": "#ffffff"
 }
+
+# Light and Dark Mode Container Styles
+LIGHT_MODE_STYLE = {
+    "background-color": "#E3FDFD", 
+    "padding": "20px", 
+    "min-height": "100vh"
+}
+
+DARK_MODE_STYLE = {
+    "background-color": "#121212", 
+    "padding": "20px", 
+    "min-height": "100vh",
+    "color": "#ffffff"
+}
+
+# Light and Dark Mode Styles for DataTable
+DATATABLE_STYLE_LIGHT = {
+    "backgroundColor": "#ffffff",
+    "color": "#000000",
+    "border": "1px solid #ddd",
+}
+
+DATATABLE_STYLE_DARK = {
+    "backgroundColor": "#1e1e1e",
+    "color": "#ffffff",
+    "border": "1px solid #444",
+}
+
+TOGGLE_LABEL_LIGHT = {"color": "#000000"}  # Black text for light mode
+TOGGLE_LABEL_DARK = {"color": "#ffffff"}  # White text for dark mode
+
+
+
 
 
 def create_layout():
@@ -84,32 +124,69 @@ def create_layout():
     main_content = dbc.Container([
         dbc.Row([
             # Dynamically show/hide toggle button based on sidebar state (handled in callbacks)
-            dbc.Col([ dbc.Row([dbc.Col(dbc.Button("☰", id="toggle-sidebar", color="primary", className="mb-3 d-none d-md-block d-flex align-items-center justify-content-center sidebar-toggle", style={"width": "50px", "height": "50px"} ),width="auto"),
-                               dbc.Col(html.H2("🩸 Blood Group Dashboard", className="text-center text-primary mb-4", style={"font-weight": "bold", "margin-left": "10px"},),width= True),],align="center",justify="start",),
+            dbc.Col([ dbc.Row([
+    dbc.Col(
+        dbc.Button("☰", id="toggle-sidebar", color="primary", 
+                  className="mb-3 d-none d-md-block d-flex align-items-center justify-content-center sidebar-toggle", 
+                  style={"width": "50px", "height": "50px"}),
+        width="auto"
+    ),
+    dbc.Col(
+        html.H2("🩸 Blood Group Dashboard", className="text-primary mb-4", 
+               style={"font-weight": "bold", "margin-left": "10px"}),
+        width=True
+    ),
+    dbc.Col(
+        dbc.Switch(
+            id="dark-mode-toggle",
+            label="Dark Mode",
+            value=False,
+            className="mt-2",
+            style={"color": "#000000","font-weight": "bold"}  # Default color for light mode
+        ),
+        width="auto"
+    )
+], align="center", justify="start"),
+
                 dbc.Row([
-                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='choropleth-map', style={"height": "300px"}), style=CARD_STYLE, className="card")), md=4, sm=12, className="mb-3"),
-                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='pie-chart', style={"height": "300px"}), style=CARD_STYLE, className="card")), md=4, sm=12, className="mb-3"),
-                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='bar-chart', style={"height": "300px"}), style=CARD_STYLE, className="card")), md=4, sm=12, className="mb-3"),
+                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='choropleth-map', style={"height": "300px"}), id='card-1',style=CARD_STYLE_LIGHT, className="card")), md=4, sm=12, className="mb-3"),
+                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='pie-chart', style={"height": "300px"}), id='card-2',style=CARD_STYLE_LIGHT, className="card")), md=4, sm=12, className="mb-3"),
+                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='bar-chart', style={"height": "300px"}), id='card-3',style=CARD_STYLE_LIGHT, className="card")), md=4, sm=12, className="mb-3"),
                 ]),
                 dbc.Row([
-                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='gauge-chart', style={"height": "300px"}), style=CARD_STYLE, className="card")), md=4, sm=12, className="mb-3"),
-                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='scatter-plot', style={"height": "300px"}), style=CARD_STYLE, className="card")), md=4, sm=12, className="mb-3"),
-                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='heatmap', style={"height": "300px"}), style=CARD_STYLE, className="card")), md=4, sm=12, className="mb-3"),
+                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='gauge-chart', style={"height": "300px"}), id='card-4',style=CARD_STYLE_LIGHT, className="card")), md=4, sm=12, className="mb-3"),
+                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='scatter-plot', style={"height": "300px"}), id='card-5', style=CARD_STYLE_LIGHT, className="card")), md=4, sm=12, className="mb-3"),
+                    dbc.Col(dcc.Loading(dbc.Card(dcc.Graph(id='heatmap', style={"height": "300px"}), id='card-6',style=CARD_STYLE_LIGHT, className="card")), md=4, sm=12, className="mb-3"),
                 ]),
                 dbc.Row([
-                    dbc.Col(dcc.Loading(dbc.Card(
-                        dash_table.DataTable(
-                            id='data-table',
-                            columns=[{"name": i, "id": i} for i in ["Country", "Population"] + BLOOD_GROUPS + ["Continent", "Rarest_Blood_Type", "Diversity_Index", "Can_Donate_To"]],
-                            data=[],
-                            fixed_rows={'headers': True},
-                            style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
-                            page_size=5,
-                            style_cell={'minWidth': '100px', 'textAlign': 'left'}
-                        ),
-                        style={**CARD_STYLE, "max-width": "100%", "margin": "0 auto"},
-                        className="card mt-3"
-                    )), width=12)
+                    dbc.Col(
+    dcc.Loading(
+        dbc.Card(
+            dash_table.DataTable(
+                id="data-table",
+                columns=[
+                    {"name": i, "id": i}
+                    for i in ["Country", "Population"] + BLOOD_GROUPS + ["Continent", "Rarest_Blood_Type", "Diversity_Index", "Can_Donate_To"]
+                ],
+                data=[],
+                fixed_rows={"headers": True},
+                style_header={"backgroundColor": "#f8f9fa", 
+                        "color": "#000000",         
+                        "fontWeight": "bold",
+                        "textAlign": "center",},
+                style_table={"overflowX": "auto", "maxHeight": "300px", "overflowY": "scroll"},
+                page_size=5,
+                style_cell={"minWidth": "100px", "textAlign": "left"},  # Default cell style
+            ),
+            id="data-table-card",
+            style={**CARD_STYLE_LIGHT, "max-width": "100%", "margin": "0 auto"},
+            className="card mt-3",
+        )
+    ),
+    width=12,
+),
+
+
                 ]),
                 html.Footer(
                     [
@@ -129,7 +206,7 @@ def create_layout():
         ]),
         sidebar,
         info_modal
-    ], fluid=True, style={"background-color": "#E3FDFD", "padding": "20px", "min-height": "100vh"})  # Full-width layout
+    ], fluid=True, style={**LIGHT_MODE_STYLE, "background-color": "#E3FDFD", "padding": "20px", "min-height": "100vh"}, id="main-container")  # Full-width layout
 
     return main_content
 
