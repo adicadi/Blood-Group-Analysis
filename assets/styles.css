@@ -52,3 +52,7 @@
 .navbar {
     animation: fadeIn 1.5s ease-in-out;
 }
+.card:hover {
+    transform: perspective(500px) rotateX(0deg) rotateY(0deg) scale(1.05);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
