@@ -1,6 +1,7 @@
 # Blood-Group-Analysis
  # 🩸 Blood Type Distribution Dashboard
-<img width="1440" alt="image" src="https://github.com/user-attachments/assets/8e091edd-c729-4086-8224-ea5e819cf775" />
+<img width="1552" alt="image" src="https://github.com/user-attachments/assets/e433ade6-4957-4698-9070-59c306681f5d" />
+
 
 ## Project Overview
 
@@ -13,6 +14,8 @@ This dashboard provides an interactive visualization of global blood type distri
   - Bar charts comparing blood type prevalence across countries
   - Pie charts displaying blood type proportions by continent
   - Gauge charts highlighting the rarest blood types in selected regions
+
+<img width="1552" alt="image" src="https://github.com/user-attachments/assets/4cf26ac0-1bbe-4e47-ba16-09aeb3bfd295" />
 
 - **Filtering Capabilities**: Filter data by:
   - Specific blood type (O+, A+, B+, AB+, O-, A-, B-, AB-)
